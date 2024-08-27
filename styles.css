@@ -1,0 +1,66 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+#map-container {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+#form-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#log-form {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+#log-form h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+#reportForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#reportForm input,
+#reportForm button {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+#reportForm button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#reportForm button:hover {
+    background-color: #218838;
+}
+
+.custom-icon {
+    font-size: 24px; /* Adjust font size as needed */
+    text-align: center;
+}
