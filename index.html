@@ -3,66 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracker</title>
-    <link href="styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>CastleWatch - Community Tracker</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Basic styles for the map and form */
-        #map-container {
-            height: 80vh; /* Adjust height as needed */
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', Arial, Helvetica, sans-serif;
+            background-color: #ffffff; /* Clean white background */
+            color: #333; /* Dark grey text for better contrast */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
-
+    
+        /* Header */
+        .header {
+            background-color: #FF6B6B; /* Coral header */
+            color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFC1A1; /* Softer coral for the border */
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 1000;
+        }
+    
+        .header-title {
+            font-size: 2.2rem; /* Slightly smaller for a refined feel */
+            font-weight: 600;
+            color: #FFF;
+        }
+    
+        .header-description {
+            font-size: 1rem;
+            color: #FFD1C1; /* Subtle coral description text */
+        }
+    
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+    
+        /* Buttons */
+        .modal-button {
+            padding: 10px 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            border: none;
+            color: #ffffff;
+            background-color: #FF6B6B;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        .modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+    
+        .btn-about {
+            background-color: #FFA69E; /* Softer coral button */
+        }
+    
+        .btn-stats {
+            background-color: #FFA69E; /* Main coral color */
+        }
+    
+        .btn-report {
+            background-color: #FFA69E; /* Pale coral for reporting */
+            color: #ffffff;
+        }
+    
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #FAFAFA; /* Very light grey background */
+        }
+    
+        #map-container {
+            width: 100%;
+            height: 70vh;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
+        }
+    
         #map {
             height: 100%;
+            width: 100%;
+            border-radius: 15px;
         }
-
-        /* Modal Styles */
-        .modal-header {
-            background-color: #865214;
-            color: white;
+    
+        #slider-container {
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            width: 550px;
         }
+    
+        #slider-container label {
+            font-weight: 500;
+            color: #FF6B6B;
+        }
+        #dayRange {
+            width: 85%;
+        }
+    
+        #dayRangeLabel {
+            font-weight: bold;
+            color: #FFA69E;
+        }
+    
+        /* Footer */
+        .footer {
+            background-color: #FF6B6B;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+        }
+    
+        /* Mobile Responsiveness */
+        @media only screen and (max-width: 768px) {
+            .header-title {
+                font-size: 1.8rem;
+            }
+            .header-description {
+                font-size: 0.85rem;
+            }
+            .header-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .modal-button {
+                width: 100%;
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .main-content {
+                padding: 10px;
+            }
+            #map-container {
+                height: 65vh;
+            }
+            .footer {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+            #slider-container {
+                width: 85%;
+                padding: 5px;
+            }
+        }
+    
+        @media only screen and (max-width: 480px) {
+            .header-title {
+                font-size: 1.6rem;
+            }
+            .header-description {
+                font-size: 0.75rem;
+            }
+            .main-content {
+                padding: 6px;
+            }
+            #map-container {
+                height: 60vh;
+            }
+            .modal-button {
+                font-size: 0.85rem;
+            }
+            #slider-container {
+                width: 90%;
+                padding: 4px;
+            }
+        }
+    
     </style>
 </head>
 <body>
-    <div id="map-container">
-        <div id="map"></div>
+    <div class="header">
+        <div>
+            <h1 class="header-title">CastleWatch</h1>
+            <p class="header-description">Empowering Castle Hill to mainatain and improve our neighborhood, one report at a time! <h5>Tap the map to make a report.</h5></p>
+        </div>
+        <div class="header-buttons">
+            <button class="btn btn-about modal-button" data-toggle="modal" data-target="#aboutModal"> Info </button>
+            <button class="btn btn-stats modal-button" data-toggle="modal" data-target="#statisticsModal"> Stats </button>
+            <button class="btn btn-report modal-button" data-toggle="modal" data-target="#reportProblemModal">Report</button>
+        </div>
+    </div>
+    <!-- Message Box on Successful Report-->
+    <div id="messageBox" style="display:none; margin-top: 10px;">
+        <span id="messageContent"></span>
+    </div>
+    <div id="slider-container">
+        <label for="dayRange">View reports from the past <span id="dayRangeLabel">30</span> days:</label>
+        <input type="range" id="dayRange" min="0" max="30" step="1" value="30">
+    </div>
+    
+    <div class="main-content">
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
     </div>
 
-    <!-- Modal for adding reports -->
-    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="footer">
+        <p>&copy; 2024 CastleWatch - Together we help our community. Created for free by 
+            <a href="https://www.prymebridge.com" target="_blank" style="color: #CC70EF; text-decoration: none;">PrymeBridge</a>
+        </p>
+    </div>
+    
+    <!-- Category Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reportModalLabel">Report Location</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-content" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="background-color: #FF6B6B; color: white; border-bottom: none; border-radius: 10px 10px 0 0;">
+                    <h5 class="modal-title" id="categoryModalLabel">Select Your Report Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="reportForm">
+                <div class="modal-body" style="padding: 20px;">
+                    <form id="categoryForm">
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" placeholder="Description" required>
+                            <label for="categorySelect" style="font-weight: 600; color: #333;">Choose what you spotted:</label>
+                            <select class="form-control" id="categorySelect" required style="border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="">Select...</option>
+                                <option value="Poop">💩 Pet Mess</option>
+                                <option value="Litter">🚯 Litter & Trash</option>
+                                <option value="Fly Tipping">🪰 Illegal Dumping</option>
+                                <option value="Construction">🚧 Construction Zones</option>
+                                <option value="Water Pressure">🚰 Water Issues</option>
+                                <option value="No Internet">🌐 Internet Outage</option>
+                                <option value="Parking">🏎️ Parking</option>
+                                <option value="Water Leak"> 💦 Water Leak</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="category">Category</label>
-                            <input type="text" class="form-control" id="category" placeholder="Category" required>
-                        </div>
-                        <input type="hidden" id="lat" name="latitude">
-                        <input type="hidden" id="lng" name="longitude">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn" style="background-color: #FF6B6B; color: white; border-radius: 5px; padding: 10px 20px; font-weight: 600; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);">
+                            Submit Report
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="background-color: #FF6B6B; color: white; border-bottom: none; border-radius: 10px 10px 0 0;">
+                    <h5 class="modal-title" id="aboutModalLabel">About CastleWatch</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <p style="font-size: 14px; color: #333;">CastleWatch is a community-driven app that lets neighbors come together to improve their streets. Whether it's reporting litter, illegal dumping, construction, or even a water issue, CastleWatch has your back. Together, we can keep our streets cleaner and safer for everyone.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div class="modal fade" id="statisticsModal" tabindex="-1" role="dialog" aria-labelledby="statisticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="background-color: #FF6B6B; color: white; border-bottom: none; border-radius: 10px 10px 0 0;">
+                    <h5 class="modal-title" id="statisticsModalLabel">CastleWatch Statistics</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <canvas id="barChart" width="400" height="200" style="margin-top: 20px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Report Problem Modal -->
+    <div class="modal fade" id="reportProblemModal" tabindex="-1" role="dialog" aria-labelledby="reportProblemModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="background-color: #FF6B6B; color: white; border-bottom: none; border-radius: 10px 10px 0 0;">
+                    <h5 class="modal-title" id="reportProblemModalLabel">Report an Issue</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <p style="font-size: 14px; color: #333;">Help us improve CastleWatch by reporting any problems you’ve encountered. Whether it's a bug, an error, or a usability issue, your feedback makes a difference!</p>
+                    <form id="reportProblemForm">
+                        <div class="form-group">
+                            <label for="problemCategory" style="font-weight: 600; color: #333;">Select Issue Type:</label>
+                            <select class="form-control" id="problemCategory" required style="border-radius: 5px; border: 1px solid #ccc;">
+                                <option value="">Choose...</option>
+                                <option value="Bug">Bug or Glitch</option>
+                                <option value="UI Issue">User Interface Problem</option>
+                                <option value="Performance">Performance Issue</option>
+                                <option value="Feature Request">Feature Request</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="problemDescription" style="font-weight: 600; color: #333;">Describe the Problem:</label>
+                            <textarea class="form-control" id="problemDescription" rows="4" placeholder="Please provide as much detail as possible..." required style="border-radius: 5px; border: 1px solid #ccc;"></textarea>
+                        </div>
+                        
+                        <!-- Add the Privacy Policy link here -->
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                            By submitting a report, you agree to our 
+                            <a href="privacy-policy.html" target="_blank" style="color: #FF6B6B; text-decoration: underline;">Privacy Policy</a>.
+                        </p>
+
+                        <button type="submit" class="btn" style="background-color: #FF6B6B; color: white; border-radius: 5px; padding: 10px 20px; font-weight: 600; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);">
+                            Submit Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div id="messageBox" style="display:none; position:fixed; top:20px; right:20px; background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; border-radius: 5px; z-index: 1000;">
+        <span id="messageContent"></span>
+    </div>
+
+    <!-- Script files -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="script.js"></script>
+    
+
 </body>
 </html>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQPZ0CR47M"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FQPZ0CR47M');
+</script>
